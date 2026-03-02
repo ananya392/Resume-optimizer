@@ -1,5 +1,6 @@
 import streamlit as st
 from agent import run_agent
+from utils.pdf_generator import generate_resume_pdf
 
 st.title("Resume Optimization Agent with ATS Improvement")
 
@@ -22,17 +23,14 @@ if st.button("Optimize Resume"):
 
     st.write(f"🔁 Iterations Used: {results['iterations']}")
 
-    st.subheader("❌ Missing Skills (Before Optimization)")
-    if results["initial_missing"]:
-        st.write(results["initial_missing"])
-    else:
-        st.success("No missing skills detected!")
-
-    st.subheader("⚠ Remaining Missing Skills (After Optimization)")
-    if results["final_missing"]:
-        st.write(results["final_missing"])
-    else:
-        st.success("All key skills covered!")
-
     st.subheader("📝 Optimized Resume")
     st.text_area("Final Resume", results["improved_resume"], height=400)
+    pdf_path = generate_resume_pdf(results["improved_resume"])
+
+    with open(pdf_path, "rb") as f:
+        st.download_button(
+            label="📄 Download Optimized Resume (PDF)",
+            data=f,
+            file_name="optimized_resume.pdf",
+            mime="application/pdf"
+        )

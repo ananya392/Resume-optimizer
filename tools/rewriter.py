@@ -1,9 +1,16 @@
+import os
 import google.generativeai as genai
 
 # Configure API key
-genai.configure(api_key="GEMINI_API_KEY")
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    raise RuntimeError(
+        "GEMINI_API_KEY environment variable is not set. "
+        "Set it before running the app (e.g. `export GEMINI_API_KEY=...`)."
+    )
+genai.configure(api_key=api_key)
 
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 def rewrite_resume(resume_text, missing_skills):
     missing_str = ", ".join(missing_skills)

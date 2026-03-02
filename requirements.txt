@@ -3,4 +3,5 @@ streamlit
 python-dotenv
 pdfplumber
 spacy
-
+google-generativeai
+reportlab

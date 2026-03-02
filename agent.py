@@ -1,5 +1,5 @@
 from tools.parser import parse_resume
-from tools.keyword_extractor import extract_keywords
+from tools.keyword_extractor import extract_keywords_local
 from tools.matcher import calculate_ats_score
 from tools.rewriter import rewrite_resume
 
@@ -7,7 +7,7 @@ MAX_ITERATIONS = 3
 
 def run_agent(resume_file, jd_text):
     resume_text = parse_resume(resume_file)
-    keywords = extract_keywords(jd_text)
+    keywords = extract_keywords_local(jd_text)
 
     # Initial score
     initial_score, initial_missing = calculate_ats_score(resume_text, keywords)
@@ -16,7 +16,7 @@ def run_agent(resume_file, jd_text):
     current_score = initial_score
     current_missing = initial_missing
 
-    while current_score < 80 and iteration < MAX_ITERATIONS:
+    while current_score < 90 and iteration < MAX_ITERATIONS:
         resume_text = rewrite_resume(resume_text, current_missing)
         current_score, current_missing = calculate_ats_score(resume_text, keywords)
         iteration += 1
