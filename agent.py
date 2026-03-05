@@ -1,14 +1,15 @@
 from tools.parser import parse_resume
+from tools.web_search import search_role_skills
 from tools.keyword_extractor import extract_keywords_local
 from tools.matcher import calculate_ats_score
 from tools.rewriter import rewrite_resume
 
 MAX_ITERATIONS = 3
 
-def run_agent(resume_file, jd_text):
+def run_agent(resume_file, role):
     resume_text = parse_resume(resume_file)
-    keywords = extract_keywords_local(jd_text)
-
+    web_text = search_role_skills(role)
+    keywords = extract_keywords_local(web_text)
     # Initial score
     initial_score, initial_missing = calculate_ats_score(resume_text, keywords)
 

@@ -5,10 +5,10 @@ from utils.pdf_generator import generate_resume_pdf
 st.title("Resume Optimization Agent with ATS Improvement")
 
 resume_file = st.file_uploader("Upload Resume (PDF)")
-jd_text = st.text_area("Paste Job Description")
+role = st.text_input("Enter Job Role (e.g., Data Scientist, ML Engineer)")
 
 if st.button("Optimize Resume"):
-    results = run_agent(resume_file, jd_text)
+    results = run_agent(resume_file, role)
 
     st.subheader("📊 ATS Score Comparison")
 
@@ -22,7 +22,10 @@ if st.button("Optimize Resume"):
                   delta=results['final_score'] - results['initial_score'])
 
     st.write(f"🔁 Iterations Used: {results['iterations']}")
-
+    st.subheader("Missing Skills (Before)")
+    st.write(results["initial_missing"])
+    st.subheader("Missing Skills (After)")
+    st.write(results["final_missing"])
     st.subheader("📝 Optimized Resume")
     st.text_area("Final Resume", results["improved_resume"], height=400)
     pdf_path = generate_resume_pdf(results["improved_resume"])

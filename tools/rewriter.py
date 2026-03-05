@@ -12,8 +12,8 @@ genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
-def rewrite_resume(resume_text, missing_skills):
-    missing_str = ", ".join(missing_skills)
+def rewrite_resume(resume_text, missing_keywords):
+    missing_str = ", ".join(missing_keywords)
 
     prompt = f"""
     Improve the resume below to increase ATS score.
