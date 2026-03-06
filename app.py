@@ -22,10 +22,7 @@ if st.button("Optimize Resume"):
                   delta=results['final_score'] - results['initial_score'])
 
     st.write(f"🔁 Iterations Used: {results['iterations']}")
-    st.subheader("Missing Skills (Before)")
-    st.write(results["initial_missing"])
-    st.subheader("Missing Skills (After)")
-    st.write(results["final_missing"])
+    
     st.subheader("📝 Optimized Resume")
     st.text_area("Final Resume", results["improved_resume"], height=400)
     pdf_path = generate_resume_pdf(results["improved_resume"])
