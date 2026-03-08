@@ -1,43 +1,66 @@
 import re
 
+SECTION_WEIGHTS = {
+    "skills": 0.4,
+    "technical skills": 0.4,
+    "experience": 0.3,
+    "work experience": 0.3,
+    "projects": 0.2,
+    "personal projects": 0.2,
+    "other": 0.1
+}
+
+
+def split_sections(resume_text):
+
+    sections = {}
+    current_section = "other"
+
+    for line in resume_text.split("\n"):
+
+        line_clean = line.strip().lower()
+
+        if line_clean in SECTION_WEIGHTS:
+            current_section = line_clean
+            sections[current_section] = []
+            continue
+
+        sections.setdefault(current_section, []).append(line)
+
+    return sections
+
+
 def calculate_ats_score(resume_text, keywords):
 
-    resume = resume_text.lower()
+    resume_text = resume_text.lower()
 
-    total_keywords = len(keywords)
+    sections = split_sections(resume_text)
 
-    matched_keywords = []
+    total_score = 0
+    matched_keywords = set()
     missing_keywords = []
 
-    frequency_count = 0
+    for keyword in keywords:
 
-    for skill in keywords:
+        keyword = keyword.lower()
+        found = False
 
-        skill = skill.lower()
+        for section, content in sections.items():
 
-        occurrences = len(re.findall(rf"\b{re.escape(skill)}\b", resume))
+            section_text = " ".join(content)
 
-        if occurrences > 0:
-            matched_keywords.append(skill)
-            frequency_count += occurrences
-        else:
-            missing_keywords.append(skill)
+            if re.search(rf"\b{re.escape(keyword)}\b", section_text):
 
-    # 1️⃣ Keyword coverage score
-    keyword_score = (len(matched_keywords) / total_keywords) * 100 if total_keywords else 0
+                weight = SECTION_WEIGHTS.get(section, SECTION_WEIGHTS["other"])
+                total_score += weight * 100 / len(keywords)
 
-    # 2️⃣ Frequency score
-    frequency_score = min((frequency_count / (total_keywords * 2)) * 100, 100)
+                matched_keywords.add(keyword)
+                found = True
+                break
 
-    # 3️⃣ Skill diversity score
-    unique_skills = len(set(matched_keywords))
-    diversity_score = (unique_skills / total_keywords) * 100 if total_keywords else 0
+        if not found:
+            missing_keywords.append(keyword)
 
-    # Weighted final score
-    final_score = (
-        0.5 * keyword_score +
-        0.3 * frequency_score +
-        0.2 * diversity_score
-    )
+    final_score = min(total_score, 100)
 
-    return round(final_score,2), missing_keywords
+    return round(final_score, 2), missing_keywords
